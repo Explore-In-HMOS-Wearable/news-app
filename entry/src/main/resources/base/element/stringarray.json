@@ -1,0 +1,33 @@
+{
+  "strarray": [
+    {
+      "name": "news_types",
+      "value": [
+        {
+          "value": "Business"
+        },
+        {
+          "value": "Entertainment"
+        },
+        {
+          "value": "General"
+        },
+        {
+          "value": "Health"
+        },
+        {
+          "value": "Politics"
+        },
+        {
+          "value": "Science"
+        },
+        {
+          "value": "Sports"
+        },
+        {
+          "value": "Technology"
+        }
+      ]
+    }
+  ]
+}
