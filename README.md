@@ -16,7 +16,7 @@ A lightweight HarmonyOS ArkTS news reader that browses categorized articles from
 - Read article details with title, summary, and body
 - Navigate back-and-forth with animated transitions
 
-# Tech  Stack
+# Tech Stack
 - **Languages:** ArkTS (TypeScript)
 - **UI:** ArkUI (`@kit.ArkUI`)
 - **Tools/IDE:** DevEco Studio **5.1.0**

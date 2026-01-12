@@ -1,32 +1,16 @@
-import { ArcButton,
-  ArcButtonOptions,
-  ArcButtonPosition,
-  ArcButtonStyleMode,
-  ArcList, ArcListAttribute, ArcListItem, ArcListItemAttribute,
-  ColorMetrics,
-  router } from '@kit.ArkUI';
 import { MockNewsService } from '../service/MockNewsService';
 import { Article } from '../model/Article';
 import StyleConstants from '../common/constants/StyleConstants';
-import { NewsPageParams } from '../model/NewsPageParams';
 
-@Entry
 @Component
 struct NewsPage {
-  private category: string = ''
-  private articles: Article[] = []
+  @Prop category: string
+  @State articles: Article[] = []
+  private pageStack: NavPathStack = new NavPathStack()
 
   aboutToAppear(): void {
-    const rawParams = router.getParams()
-
-    if (typeof rawParams === 'object' && rawParams !== null) {
-      const typedParams = rawParams as NewsPageParams
-      this.category = typedParams.category ?? ''
-
-      const service = new MockNewsService()
-      this.articles = this.getArticlesByCategory(service, this.category)
-    } else {
-    }
+    const service = new MockNewsService()
+    this.articles = this.getArticlesByCategory(service, this.category)
   }
 
   getArticlesByCategory(service: MockNewsService, category: string): Article[] {
@@ -51,16 +35,16 @@ struct NewsPage {
   }
 
   build() {
-    Column() {
-      Text(`Category:\n ${this.category}`)
-        .fontSize(StyleConstants.FONT_SIZE)
-        .fontWeight(FontWeight.Bold)
-        .margin({ top: 8 })
-
+    NavDestination() {
       Column() {
-        ArcList() {
+        Text(`Category:\n ${this.category}`)
+          .fontSize(StyleConstants.FONT_SIZE)
+          .fontWeight(FontWeight.Bold)
+          .margin({ top: 8 })
+
+        List() {
           ForEach(this.articles, (item: Article) => {
-            ArcListItem() {
+            ListItem() {
               Column() {
                 Text(item.title)
                   .fontSize(StyleConstants.FONT_SIZE)
@@ -70,52 +54,38 @@ struct NewsPage {
                   .fontSize(StyleConstants.FONT_SIZE)
                   .opacity(StyleConstants.TEXT_OPACITY_MEDIUM)
                   .margin({ top: StyleConstants.LIST_ITEM_MARGIN_TOP })
-
               }
               .padding(StyleConstants.CARD_PADDING)
               .backgroundColor('#cc0071bc')
               .borderRadius(StyleConstants.CARD_RADIUS)
-            }.onClick(() => {
-              router.pushUrl({
-                url: 'pages/ArticlePage',
-                params: {
-                  article: JSON.stringify(item)
-                }
-              })
+            }
+            .onClick(() => {
+              this.pageStack.pushPathByName('ArticlePage', JSON.stringify(item))
             })
           }, (item: Article) => item.title)
-        }.borderRadius(StyleConstants.CARD_RADIUS)
-        .scrollBar(BarState.Off)
-      }.height(150)
-      .width('100%')
-      .padding({ top: 4 })
+        }
+        .height('80%')
+        .width('100%')
 
-      ArcButton({
-        options: new ArcButtonOptions({
-          label: 'Go Back',
-          position: ArcButtonPosition.BOTTOM_EDGE,
-          styleMode: ArcButtonStyleMode.CUSTOM,
-          backgroundColor: ColorMetrics.rgba(54,58,62),
-          onClick: () => { router.back() }
-        })
-      }).margin({ top: -28 })
+        Button('Go Back')
+          .backgroundColor('#363a3e')
+          .margin({ top: 20 })
+          .onClick(() => {
+            this.pageStack.pop()
+          })
+      }
+      .padding(StyleConstants.PADDING)
+      .backgroundColor('#ff279efa')
+      .width(StyleConstants.FULL_PERCENT)
+      .height(StyleConstants.FULL_PERCENT)
     }
-    .padding(StyleConstants.PADDING)
-    .backgroundColor('#ff279efa')
-  }
-
-  pageTransition() {
-    PageTransitionEnter({ type: RouteType.Push, duration: 400 })
-      .slide(SlideEffect.Right)
-
-    PageTransitionEnter({ type: RouteType.Pop, duration: 400 })
-      .slide(SlideEffect.Left)
-
-    PageTransitionExit({ type: RouteType.Push, duration: 400 })
-      .slide(SlideEffect.Left)
-
-    PageTransitionExit({ type: RouteType.Pop, duration: 400 })
-      .slide(SlideEffect.Right)
+    .onReady((context: NavDestinationContext) => {
+      this.pageStack = context.pathStack
+    })
   }
 }
 
+@Builder
+export function NewsPageBuilder(category: string) {
+  NewsPage({ category: category })
+}

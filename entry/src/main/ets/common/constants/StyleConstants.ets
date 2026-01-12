@@ -2,6 +2,7 @@ class StyleConstants {
   FULL_PERCENT = '100%';
   HALF_PERCENT = '70%';
 
+
   IMAGE_HEIGHT = 100;
   IMAGE_SMALL_WIDTH = 24;
   IMAGE_SMALL_HEIGHT = 24;
